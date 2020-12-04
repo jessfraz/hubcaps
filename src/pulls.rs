@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use std::fmt;
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::form_urlencoded;
 
@@ -239,10 +240,10 @@ pub struct Pull {
     pub state: String,
     pub title: String,
     pub body: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
-    pub closed_at: Option<String>,
-    pub merged_at: Option<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub closed_at: Option<DateTime<Utc>>,
+    pub merged_at: Option<DateTime<Utc>>,
     pub head: Commit,
     pub base: Commit,
     // links
@@ -250,6 +251,7 @@ pub struct Pull {
     pub assignee: Option<User>,
     pub assignees: Vec<User>,
     pub merge_commit_sha: Option<String>,
+    #[serde(default)]
     pub merged: bool,
     pub mergeable: Option<bool>,
     pub merged_by: Option<User>,

@@ -109,6 +109,7 @@ use serde::Serialize;
 pub mod http_cache;
 #[macro_use]
 mod macros; // expose json! macro to child modules
+pub mod actions;
 pub mod activity;
 pub mod app;
 pub mod branches;
@@ -142,6 +143,7 @@ pub mod teams;
 pub mod traffic;
 pub mod users;
 pub mod watching;
+pub mod workflows;
 
 pub use crate::errors::{Error, Result};
 #[cfg(feature = "httpcache")]

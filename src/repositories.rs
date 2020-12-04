@@ -5,6 +5,7 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 use url::{form_urlencoded, Url};
 
+use crate::actions::Actions;
 use crate::branches::Branches;
 use crate::checks::CheckRuns;
 use crate::collaborators::Collaborators;
@@ -395,6 +396,11 @@ impl Repository {
     /// https://developer.github.com/v3/repos/#delete-a-repository
     pub fn delete(&self) -> Future<()> {
         self.github.delete(&self.path(""))
+    }
+
+    /// get a reference to branch operations
+    pub fn actions(&self) -> Actions {
+        Actions::new(self.github.clone(), self.owner.as_str(), self.repo.as_str())
     }
 
     /// get a reference to branch operations
