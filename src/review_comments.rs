@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::users::User;
 use crate::{Future, Github};
+use chrono::{DateTime, Utc};
 
 /// A structure for interfacing with a review comments
 pub struct ReviewComments {
@@ -67,8 +68,8 @@ pub struct ReviewComment {
     pub original_commit_id: String,
     pub user: User,
     pub body: String,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub html_url: String,
     pub pull_request_url: String,
 }
