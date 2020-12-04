@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use std::fmt;
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::form_urlencoded;
 
@@ -474,9 +475,9 @@ pub struct Issue {
     pub locked: bool,
     pub comments: u64,
     pub pull_request: Option<PullRef>,
-    pub closed_at: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
+    pub closed_at: Option<DateTime<Utc>>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub assignees: Vec<User>,
 }
 
