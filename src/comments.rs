@@ -1,6 +1,7 @@
 //! Comments interface
 use std::collections::HashMap;
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::form_urlencoded;
 
@@ -61,8 +62,8 @@ pub struct Comment {
     pub html_url: String,
     pub body: String,
     pub user: User,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Serialize)]
