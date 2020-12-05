@@ -1,6 +1,10 @@
 //! Checks interface
+use std::collections::HashMap;
+
 // see: https://developer.github.com/v3/checks/suites/
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use url::form_urlencoded;
 
 use self::super::{AuthenticationConstraint, Future, Github, MediaType};
 
@@ -216,6 +220,75 @@ pub struct CheckRun {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct CheckSuiteResponse {
+    pub total_count: u32,
+    #[serde(default)]
+    pub check_suites: Vec<CheckSuite>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CheckSuite {
     pub id: u32,
+    pub head_branch: String,
+    pub head_sha: String,
+    pub status: String,
+    pub conclusion: String,
+    #[serde(default)]
+    pub app: CheckSuiteApp,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
+pub struct CheckSuiteApp {
+    pub id: u32,
+    pub slug: String,
+    pub name: String,
+}
+
+#[derive(Default)]
+pub struct CheckSuiteListOptions {
+    params: HashMap<&'static str, String>,
+}
+
+impl CheckSuiteListOptions {
+    pub fn builder() -> CheckSuiteListOptionsBuilder {
+        CheckSuiteListOptionsBuilder::default()
+    }
+
+    /// serialize options as a string. returns None if no options are defined
+    pub fn serialize(&self) -> Option<String> {
+        if self.params.is_empty() {
+            None
+        } else {
+            let encoded: String = form_urlencoded::Serializer::new(String::new())
+                .extend_pairs(&self.params)
+                .finish();
+            Some(encoded)
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct CheckSuiteListOptionsBuilder(CheckSuiteListOptions);
+
+impl CheckSuiteListOptionsBuilder {
+    pub fn per_page(&mut self, n: usize) -> &mut Self {
+        self.0.params.insert("per_page", n.to_string());
+        self
+    }
+
+    pub fn since<S>(&mut self, since: S) -> &mut Self
+    where
+        S: Into<String>,
+    {
+        self.0.params.insert("since", since.into());
+        self
+    }
+
+    pub fn build(&self) -> CheckSuiteListOptions {
+        CheckSuiteListOptions {
+            params: self.0.params.clone(),
+        }
+    }
 }

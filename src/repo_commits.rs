@@ -3,6 +3,7 @@
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
+use crate::checks::{CheckSuiteListOptions, CheckSuiteResponse};
 use crate::users::{deserialize_null_user, User};
 use crate::{Future, Github, Stream};
 
@@ -48,6 +49,23 @@ impl RepoCommits {
     pub fn get(&self, commit_ref: &str) -> Future<RepoCommit> {
         let uri = format!("/repos/{}/{}/commits/{}", self.owner, self.repo, commit_ref);
         self.github.get::<RepoCommit>(&uri)
+    }
+
+    /// provides a stream over all pages of check suites for a commit
+    /// !!! make optional parameters
+    pub fn list_check_suites(
+        &self,
+        ref_: &str,
+        options: &CheckSuiteListOptions,
+    ) -> Future<CheckSuiteResponse> {
+        let mut uri = vec![format!(
+            "/repos/{}/{}/commits/{}/check-suites",
+            self.owner, self.repo, ref_
+        )];
+        if let Some(query) = options.serialize() {
+            uri.push(query);
+        }
+        self.github.get(&uri.join("?"))
     }
 }
 
