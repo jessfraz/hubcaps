@@ -64,15 +64,38 @@ pub struct RepoCommit {
     pub html_url: String,
     pub comments_url: String,
     pub commit: CommitDetails,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_null_user::deserialize")]
     pub author: User,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_null_user::deserialize")]
     pub committer: User,
     pub parents: Vec<CommitRef>,
     #[serde(default)]
     pub files: Vec<File>,
     #[serde(default)]
     pub stats: Stats,
+}
+
+pub mod deserialize_null_user {
+    use crate::users::User;
+    use serde::{self, Deserialize, Deserializer};
+
+    // The signature of a deserialize_with function must follow the pattern:
+    //
+    //    fn deserialize<'de, D>(D) -> Result<T, D::Error>
+    //    where
+    //        D: Deserializer<'de>
+    //
+    // although it may also be generic over the output types T.
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<User, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // Sometimes this value is passed by the API as "null" which breaks the
+        // std User parsing. We fix that here.
+        let s = User::deserialize(deserializer).unwrap_or_default();
+
+        Ok(s)
+    }
 }
 
 /// Representation of a repo commit details
