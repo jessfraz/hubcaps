@@ -232,11 +232,34 @@ pub struct CheckSuite {
     pub head_branch: String,
     pub head_sha: String,
     pub status: String,
+    #[serde(default, deserialize_with = "deserialize_null_string::deserialize")]
     pub conclusion: String,
     #[serde(default)]
     pub app: CheckSuiteApp,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+}
+
+pub mod deserialize_null_string {
+    use serde::{self, Deserialize, Deserializer};
+
+    // The signature of a deserialize_with function must follow the pattern:
+    //
+    //    fn deserialize<'de, D>(D) -> Result<T, D::Error>
+    //    where
+    //        D: Deserializer<'de>
+    //
+    // although it may also be generic over the output types T.
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<String, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // Sometimes this value is passed by the API as "null" which breaks the
+        // std User parsing. We fix that here.
+        let s = String::deserialize(deserializer).unwrap_or_default();
+
+        Ok(s)
+    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
