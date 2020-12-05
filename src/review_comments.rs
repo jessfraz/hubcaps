@@ -78,9 +78,9 @@ pub struct ReviewComment {
     pub url: String,
     pub diff_hunk: String,
     pub path: String,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_null_u64::deserialize")]
     pub position: u64,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_null_u64::deserialize")]
     pub original_position: u64,
     pub commit_id: String,
     pub original_commit_id: String,
@@ -90,6 +90,28 @@ pub struct ReviewComment {
     pub updated_at: DateTime<Utc>,
     pub html_url: String,
     pub pull_request_url: String,
+}
+
+pub mod deserialize_null_u64 {
+    use serde::{self, Deserialize, Deserializer};
+
+    // The signature of a deserialize_with function must follow the pattern:
+    //
+    //    fn deserialize<'de, D>(D) -> Result<T, D::Error>
+    //    where
+    //        D: Deserializer<'de>
+    //
+    // although it may also be generic over the output types T.
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<u64, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // Sometimes this value is passed by the API as "null" which breaks the
+        // std u64 parsing. We fix that here.
+        let s = u64::deserialize(deserializer).unwrap_or(0);
+
+        Ok(s)
+    }
 }
 
 #[derive(Default)]
