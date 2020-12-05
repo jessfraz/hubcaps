@@ -1,9 +1,12 @@
 //! Review comments interface
+use std::collections::HashMap;
+
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use url::form_urlencoded;
 
 use crate::users::User;
-use crate::{Future, Github};
-use chrono::{DateTime, Utc};
+use crate::{Future, Github, Stream};
 
 /// A structure for interfacing with a review comments
 pub struct ReviewComments {
@@ -29,8 +32,21 @@ impl ReviewComments {
     }
 
     /// list review comments
-    pub fn list(&self) -> Future<Vec<ReviewComment>> {
-        self.github.get::<Vec<ReviewComment>>(&self.path())
+    pub fn list(&self, options: &ReviewCommentListOptions) -> Future<Vec<ReviewComment>> {
+        let mut uri = vec![self.path()];
+        if let Some(query) = options.serialize() {
+            uri.push(query);
+        }
+        self.github.get(&uri.join("?"))
+    }
+
+    /// provides a stream over all pages of the review comments
+    pub fn iter(&self, options: &ReviewCommentListOptions) -> Stream<ReviewComment> {
+        let mut uri = vec![self.path()];
+        if let Some(query) = options.serialize() {
+            uri.push(query);
+        }
+        self.github.get_stream(&uri.join("?"))
     }
 
     /// Create new review comment
@@ -40,7 +56,7 @@ impl ReviewComments {
 
     fn path(&self) -> String {
         format!(
-            "/repos/{}/{}/pulls/{}/comments?per_page=100",
+            "/repos/{}/{}/pulls/{}/comments",
             self.owner, self.repo, self.number
         )
     }
@@ -72,4 +88,51 @@ pub struct ReviewComment {
     pub updated_at: DateTime<Utc>,
     pub html_url: String,
     pub pull_request_url: String,
+}
+
+#[derive(Default)]
+pub struct ReviewCommentListOptions {
+    params: HashMap<&'static str, String>,
+}
+
+impl ReviewCommentListOptions {
+    pub fn builder() -> ReviewCommentListOptionsBuilder {
+        ReviewCommentListOptionsBuilder::default()
+    }
+
+    /// serialize options as a string. returns None if no options are defined
+    pub fn serialize(&self) -> Option<String> {
+        if self.params.is_empty() {
+            None
+        } else {
+            let encoded: String = form_urlencoded::Serializer::new(String::new())
+                .extend_pairs(&self.params)
+                .finish();
+            Some(encoded)
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct ReviewCommentListOptionsBuilder(ReviewCommentListOptions);
+
+impl ReviewCommentListOptionsBuilder {
+    pub fn per_page(&mut self, n: usize) -> &mut Self {
+        self.0.params.insert("per_page", n.to_string());
+        self
+    }
+
+    pub fn since<S>(&mut self, since: S) -> &mut Self
+    where
+        S: Into<String>,
+    {
+        self.0.params.insert("since", since.into());
+        self
+    }
+
+    pub fn build(&self) -> ReviewCommentListOptions {
+        ReviewCommentListOptions {
+            params: self.0.params.clone(),
+        }
+    }
 }
