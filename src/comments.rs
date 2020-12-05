@@ -98,6 +98,11 @@ impl CommentListOptions {
 pub struct CommentListOptionsBuilder(CommentListOptions);
 
 impl CommentListOptionsBuilder {
+    pub fn per_page(&mut self, n: usize) -> &mut Self {
+        self.0.params.insert("per_page", n.to_string());
+        self
+    }
+
     pub fn since<S>(&mut self, since: S) -> &mut Self
     where
         S: Into<String>,

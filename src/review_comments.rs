@@ -40,7 +40,7 @@ impl ReviewComments {
 
     fn path(&self) -> String {
         format!(
-            "/repos/{}/{}/pulls/{}/comments",
+            "/repos/{}/{}/pulls/{}/comments?per_page=100",
             self.owner, self.repo, self.number
         )
     }
