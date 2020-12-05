@@ -8,7 +8,7 @@ use url::form_urlencoded;
 
 use crate::comments::Comments;
 use crate::labels::Label;
-use crate::users::User;
+use crate::users::{deserialize_null_user, User};
 use crate::utils::{percent_encode, PATH_SEGMENT};
 use crate::{Future, Github, SortDirection, Stream};
 
@@ -479,6 +479,8 @@ pub struct Issue {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub assignees: Vec<User>,
+    #[serde(default, deserialize_with = "deserialize_null_user::deserialize")]
+    pub closed_by: User,
 }
 
 /// A reference to a pull request.

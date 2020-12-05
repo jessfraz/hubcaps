@@ -12,7 +12,7 @@ use crate::labels::Label;
 use crate::pull_commits::PullCommits;
 use crate::review_comments::ReviewComments;
 use crate::review_requests::ReviewRequests;
-use crate::users::User;
+use crate::users::{deserialize_null_user, User};
 use crate::{Future, Github, SortDirection, Stream};
 
 /// Sort directions for pull requests
@@ -254,7 +254,10 @@ pub struct Pull {
     #[serde(default)]
     pub merged: bool,
     pub mergeable: Option<bool>,
-    pub merged_by: Option<User>,
+    #[serde(default, deserialize_with = "deserialize_null_user::deserialize")]
+    pub merged_by: User,
+    #[serde(default, deserialize_with = "deserialize_null_user::deserialize")]
+    pub closed_by: User,
     pub comments: Option<u64>,
     pub commits: Option<u64>,
     pub additions: Option<u64>,
