@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use url::form_urlencoded;
 
 use crate::users::User;
-use crate::{Future, Github};
+use crate::{Future, Github, Stream};
 
 /// A structure for interfacing with a issue comments
 pub struct Comments {
@@ -36,13 +36,22 @@ impl Comments {
         self.github.post(&self.path(), json!(comment))
     }
 
-    /// list pull requests
+    /// list comments
     pub fn list(&self, options: &CommentListOptions) -> Future<Vec<Comment>> {
         let mut uri = vec![self.path()];
         if let Some(query) = options.serialize() {
             uri.push(query);
         }
         self.github.get(&uri.join("?"))
+    }
+
+    /// provides a stream over all pages of the comments
+    pub fn iter(&self, options: &CommentListOptions) -> Stream<Comment> {
+        let mut uri = vec![self.path()];
+        if let Some(query) = options.serialize() {
+            uri.push(query);
+        }
+        self.github.get_stream(&uri.join("?"))
     }
 
     fn path(&self) -> String {
