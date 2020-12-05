@@ -64,7 +64,9 @@ pub struct RepoCommit {
     pub html_url: String,
     pub comments_url: String,
     pub commit: CommitDetails,
+    #[serde(default)]
     pub author: User,
+    #[serde(default)]
     pub committer: User,
     pub parents: Vec<CommitRef>,
     #[serde(default)]
