@@ -1,5 +1,6 @@
 //! Repo Commits interface
 //! https://developer.github.com/v3/repos/commits/#get-a-single-commit
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 use crate::users::User;
@@ -66,6 +67,8 @@ pub struct RepoCommit {
     pub author: User,
     pub committer: User,
     pub parents: Vec<CommitRef>,
+    pub files: Vec<File>,
+    pub stats: Stats,
 }
 
 /// Representation of a repo commit details
@@ -91,5 +94,20 @@ pub struct CommitRef {
 pub struct UserStamp {
     pub name: String,
     pub email: String,
-    pub date: String,
+    pub date: DateTime<Utc>,
+}
+
+/// Representation of commit stats
+#[derive(Debug, Deserialize)]
+pub struct Stats {
+    pub additions: i64,
+    pub deletions: i64,
+    pub total: i64,
+}
+
+/// Representation of a file that changed in a commit
+#[derive(Debug, Deserialize)]
+pub struct File {
+    pub filename: String,
+    pub status: String,
 }
