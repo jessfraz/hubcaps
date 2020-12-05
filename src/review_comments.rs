@@ -78,7 +78,9 @@ pub struct ReviewComment {
     pub url: String,
     pub diff_hunk: String,
     pub path: String,
+    #[serde(default)]
     pub position: u64,
+    #[serde(default)]
     pub original_position: u64,
     pub commit_id: String,
     pub original_commit_id: String,
