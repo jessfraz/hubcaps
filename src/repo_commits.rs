@@ -67,7 +67,9 @@ pub struct RepoCommit {
     pub author: User,
     pub committer: User,
     pub parents: Vec<CommitRef>,
+    #[serde(default)]
     pub files: Vec<File>,
+    #[serde(default)]
     pub stats: Stats,
 }
 
@@ -98,7 +100,7 @@ pub struct UserStamp {
 }
 
 /// Representation of commit stats
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 pub struct Stats {
     pub additions: i64,
     pub deletions: i64,
