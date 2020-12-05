@@ -411,6 +411,11 @@ impl PullListOptions {
 pub struct PullListOptionsBuilder(PullListOptions);
 
 impl PullListOptionsBuilder {
+    pub fn per_page(&mut self, n: usize) -> &mut Self {
+        self.0.params.insert("per_page", n.to_string());
+        self
+    }
+
     pub fn state(&mut self, state: State) -> &mut Self {
         self.0.params.insert("state", state.to_string());
         self
