@@ -287,6 +287,7 @@ pub mod deserialize_null_u32 {
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct CheckSuiteApp {
+    #[serde(default, deserialize_with = "deserialize_null_u32::deserialize")]
     pub id: u32,
     pub slug: String,
     pub name: String,
