@@ -33,15 +33,7 @@ impl<'a> CheckRuns {
     }
 
     pub fn create(&self, check_run_options: &CheckRunOptions) -> Future<CheckRun> {
-        match serde_json::to_string(check_run_options) {
-            Ok(data) => self.github.post_media::<CheckRun>(
-                &self.path(""),
-                data.into_bytes(),
-                MediaType::Preview("antiope"),
-                AuthenticationConstraint::Unconstrained,
-            ),
-            Err(e) => Box::pin(futures::future::err(e.into())),
-        }
+        self.github.post(&self.path(""), json!(check_run_options))
     }
 
     pub fn update(
@@ -49,24 +41,17 @@ impl<'a> CheckRuns {
         check_run_id: &str,
         check_run_options: &CheckRunUpdateOptions,
     ) -> Future<CheckRun> {
-        match serde_json::to_string(check_run_options) {
-            Ok(data) => self.github.post_media::<CheckRun>(
-                &self.path(&format!("/{}", check_run_id)),
-                data.into_bytes(),
-                MediaType::Preview("antiope"),
-                AuthenticationConstraint::Unconstrained,
-            ),
-            Err(e) => Box::pin(futures::future::err(e.into())),
-        }
+        self.github.patch(
+            &self.path(&format!("/{}", check_run_id)),
+            json!(check_run_options),
+        )
     }
 
     pub fn list_for_suite(&self, suite_id: &str) -> Future<Vec<CheckRun>> {
-        // !!! does this actually work?
-        // https://developer.github.com/v3/checks/runs/#list-check-runs-in-a-check-suite
-        self.github.get_media::<Vec<CheckRun>>(
-            &self.path(&format!("/{}/check-runs", suite_id)),
-            MediaType::Preview("antiope"),
-        )
+        self.github.get(&format!(
+            "/repos/{}/{}/check-suites/{}/check-runs",
+            self.owner, self.repo, suite_id
+        ))
     }
 }
 
