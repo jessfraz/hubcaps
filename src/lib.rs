@@ -1119,9 +1119,13 @@ where
                                     let url = Url::from_str(&url).unwrap();
                                     let (link, payload) = github.get_pages_url(&url).await?;
                                     let mut items = into_items(payload);
-                                    let item = items.remove(0);
-                                    items.reverse();
-                                    Ok(Some((item, (github, link, items))))
+                                    if !items.is_empty() {
+                                        let item = items.remove(0);
+                                        items.reverse();
+                                        return Ok(Some((item, (github, link, items))));
+                                    }
+
+                                    Ok(None)
                                 }
                                 None => Ok(None),
                             },
