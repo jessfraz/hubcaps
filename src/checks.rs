@@ -221,6 +221,7 @@ pub struct CheckRun {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CheckSuiteResponse {
+    #[serde(default, deserialize_with = "deserialize_null_u32::deserialize")]
     pub total_count: u32,
     #[serde(default)]
     pub check_suites: Vec<CheckSuite>,
@@ -257,6 +258,28 @@ pub mod deserialize_null_string {
         // Sometimes this value is passed by the API as "null" which breaks the
         // std User parsing. We fix that here.
         let s = String::deserialize(deserializer).unwrap_or_default();
+
+        Ok(s)
+    }
+}
+
+pub mod deserialize_null_u32 {
+    use serde::{self, Deserialize, Deserializer};
+
+    // The signature of a deserialize_with function must follow the pattern:
+    //
+    //    fn deserialize<'de, D>(D) -> Result<T, D::Error>
+    //    where
+    //        D: Deserializer<'de>
+    //
+    // although it may also be generic over the output types T.
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<u32, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // Sometimes this value is passed by the API as "null" which breaks the
+        // std u32 parsing. We fix that here.
+        let s = u32::deserialize(deserializer).unwrap_or(0);
 
         Ok(s)
     }
