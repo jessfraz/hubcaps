@@ -176,7 +176,7 @@ pub struct CheckRun {
     pub name: String,
     pub head_sha: String,
     pub url: String,
-    pub check_suite: CheckSuite,
+    //pub check_suite: CheckSuite,
     pub details_url: Option<String>,
     pub external_id: Option<String>,
     pub status: Option<CheckRunState>,
