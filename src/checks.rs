@@ -6,6 +6,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::form_urlencoded;
 
+use self::super::{Future, Github};
+
 pub struct CheckRuns {
     github: Github,
     owner: String,
