@@ -356,6 +356,7 @@ impl OrganizationRepositories {
     }
 }
 
+#[derive(Clone)]
 pub struct Repository {
     github: Github,
     owner: String,
