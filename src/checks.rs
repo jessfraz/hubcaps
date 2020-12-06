@@ -223,7 +223,9 @@ pub struct CheckSuiteResponse {
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CheckSuite {
     pub id: u32,
+    #[serde(skip_serializing_if = "String::is_empty")]
     pub head_branch: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
     pub head_sha: String,
     pub status: String,
     #[serde(default, deserialize_with = "deserialize_null_string::deserialize")]
