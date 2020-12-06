@@ -195,9 +195,9 @@ pub struct CheckRun {
     pub details_url: Option<String>,
     pub external_id: Option<String>,
     pub status: Option<CheckRunState>,
-    pub started_at: Option<String>,
+    pub started_at: DateTime<Utc>,
     pub conclusion: Option<Conclusion>,
-    pub completed_at: Option<String>,
+    pub completed_at: Option<DateTime<Utc>>,
     /*
     Deleted for now:
 
