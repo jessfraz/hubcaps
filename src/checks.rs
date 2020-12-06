@@ -6,8 +6,6 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use url::form_urlencoded;
 
-use self::super::{AuthenticationConstraint, Future, Github, MediaType};
-
 pub struct CheckRuns {
     github: Github,
     owner: String,
@@ -47,7 +45,7 @@ impl<'a> CheckRuns {
         )
     }
 
-    pub fn list_for_suite(&self, suite_id: &str) -> Future<Vec<CheckRun>> {
+    pub fn list_for_suite(&self, suite_id: &str) -> Future<CheckRunResponse> {
         self.github.get(&format!(
             "/repos/{}/{}/check-suites/{}/check-runs",
             self.owner, self.repo, suite_id
@@ -202,6 +200,14 @@ pub struct CheckRun {
     pub output: Option<Output>,
      */
     pub actions: Option<Vec<Action>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct CheckRunResponse {
+    #[serde(default, deserialize_with = "deserialize_null_u32::deserialize")]
+    pub total_count: u32,
+    #[serde(default)]
+    pub check_runs: Vec<CheckRun>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
