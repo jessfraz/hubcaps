@@ -71,11 +71,18 @@ impl Content {
 
     /// Creates a file at a specific location in a repository.
     /// You DO NOT need to base64 encode the content, we will do it for you.
-    pub fn create(&self, location: &str, content: &[u8], message: &str) -> Future<NewFileResponse> {
+    pub fn create(
+        &self,
+        location: &str,
+        content: &[u8],
+        message: &str,
+        branch: &str,
+    ) -> Future<NewFileResponse> {
         let file = &NewFile {
             content: BASE64.encode(content),
             message: message.to_string(),
             sha: None,
+            branch: branch.to_string(),
         };
         self.github.put(&self.path(location, ""), json!(file))
     }
@@ -88,21 +95,24 @@ impl Content {
         content: &[u8],
         message: &str,
         sha: &str,
+        branch: &str,
     ) -> Future<NewFileResponse> {
         let file = &NewFile {
             content: BASE64.encode(content),
             message: message.to_string(),
             sha: Some(sha.to_string()),
+            branch: branch.to_string(),
         };
         self.github.put(&self.path(location, ""), json!(file))
     }
 
     /// Deletes a file.
-    pub fn delete(&self, location: &str, message: &str, sha: &str) -> Future<()> {
+    pub fn delete(&self, location: &str, message: &str, sha: &str, branch: &str) -> Future<()> {
         let file = &NewFile {
             content: "".to_string(),
             message: message.to_string(),
             sha: Some(sha.to_string()),
+            branch: branch.to_string(),
         };
         self.github
             .delete_message(&self.path(location, ""), json!(file))
@@ -133,6 +143,8 @@ pub struct NewFile {
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sha: Option<String>,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub branch: String,
 }
 
 #[derive(Debug, Deserialize)]
