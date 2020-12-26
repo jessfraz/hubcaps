@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error",""]],"struct":[["ClientError",""],["FieldErr",""]],"type":[["Result","A standard result type capturing common errors for all GitHub operations"]]});
