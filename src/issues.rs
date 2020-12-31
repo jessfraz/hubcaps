@@ -490,7 +490,7 @@ pub struct Issue {
 }
 
 /// A reference to a pull request.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct PullRef {
     pub url: String,
     pub html_url: String,

@@ -3,7 +3,7 @@ use crate::{Future, Github, Stream};
 use serde::Deserialize;
 
 /// User information
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize)]
 pub struct User {
     pub login: String,
     pub id: u64,
