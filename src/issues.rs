@@ -463,7 +463,7 @@ impl IssueOptions {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Issue {
     pub id: u64,
     pub url: String,
