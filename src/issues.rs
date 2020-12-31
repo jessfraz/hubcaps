@@ -427,22 +427,27 @@ pub struct IssueOptions {
     pub assignee: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub milestone: Option<u64>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     pub labels: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub state: Option<String>,
 }
 
 impl IssueOptions {
-    pub fn new<T, B, A, L>(
+    pub fn new<T, B, A, L, S>(
         title: T,
         body: Option<B>,
         assignee: Option<A>,
         milestone: Option<u64>,
         labels: Vec<L>,
+        state: Option<S>,
     ) -> IssueOptions
     where
         T: Into<String>,
         B: Into<String>,
         A: Into<String>,
         L: Into<String>,
+        S: Into<String>,
     {
         IssueOptions {
             title: title.into(),
@@ -453,6 +458,7 @@ impl IssueOptions {
                 .into_iter()
                 .map(|l| l.into())
                 .collect::<Vec<String>>(),
+            state: state.map(|s| s.into()),
         }
     }
 }

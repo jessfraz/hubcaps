@@ -101,6 +101,7 @@ pub struct CommitDetails {
     pub committer: Option<UserStamp>,
     pub message: String,
     pub tree: CommitRef,
+    #[serde(default)]
     pub comment_count: u64,
 }
 
