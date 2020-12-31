@@ -220,7 +220,7 @@ pub struct Links {
 
 /// Decoded file contents.
 #[derive(Debug)]
-pub struct DecodedContents(Vec<u8>);
+pub struct DecodedContents(pub Vec<u8>);
 
 impl Into<Vec<u8>> for DecodedContents {
     fn into(self) -> Vec<u8> {
