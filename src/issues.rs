@@ -217,6 +217,20 @@ impl IssueRef {
         )
     }
 
+    /// short hand for editing state = open
+    pub fn open(&self) -> Future<Issue> {
+        let mut o: IssueOptions = Default::default();
+        o.state = Some("open".to_string());
+        self.edit(&o)
+    }
+
+    /// shorthand for editing state = closed
+    pub fn close(&self) -> Future<Issue> {
+        let mut o: IssueOptions = Default::default();
+        o.state = Some("closed".to_string());
+        self.edit(&o)
+    }
+
     /// Edit the issues options
     pub fn edit(&self, is: &IssueOptions) -> Future<Issue> {
         self.github.patch(&self.path(""), json!(is))
@@ -418,8 +432,9 @@ impl IssueListOptionsBuilder {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Default, Serialize)]
 pub struct IssueOptions {
+    #[serde(skip_serializing_if = "String::is_empty")]
     pub title: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub body: Option<String>,
