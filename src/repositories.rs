@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use std::fmt;
 
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use url::{form_urlencoded, Url};
 
@@ -523,7 +524,7 @@ impl Repository {
 
 // representations (todo: replace with derive_builder)
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, JsonSchema, Deserialize)]
 pub struct Repo {
     pub id: u64,
     pub owner: User,

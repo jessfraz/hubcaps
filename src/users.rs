@@ -1,9 +1,10 @@
 //! Users interface
 use crate::{Future, Github, Stream};
+use schemars::JsonSchema;
 use serde::Deserialize;
 
 /// User information
-#[derive(Debug, Default, Clone, Deserialize)]
+#[derive(Debug, Default, JsonSchema, Clone, Deserialize)]
 pub struct User {
     pub login: String,
     pub id: u64,
