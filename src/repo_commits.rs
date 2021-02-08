@@ -30,13 +30,21 @@ impl RepoCommits {
 
     /// list repo commits
     /// !!! make optional parameters
-    pub fn list(&self, path: &str, since: Option<DateTime<Utc>>) -> Future<Vec<RepoCommit>> {
+    pub fn list(
+        &self,
+        path: &str,
+        commit_ref: &str,
+        since: Option<DateTime<Utc>>,
+    ) -> Future<Vec<RepoCommit>> {
         let mut uri = format!("/repos/{}/{}/commits?&per_page=100", self.owner, self.repo);
         if !path.is_empty() {
             uri += &format!("&path={}", path);
         }
         if let Some(date) = since {
             uri += &format!("&since={}", date.to_rfc3339());
+        }
+        if !commit_ref.is_empty() {
+            uri += &format!("&sha={}", commit_ref);
         }
         self.github.get::<Vec<RepoCommit>>(&uri)
     }
