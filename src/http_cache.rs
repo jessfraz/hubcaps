@@ -138,7 +138,9 @@ impl HttpCache for FileBasedCache {
 /// ```
 #[doc(hidden)] // public for doc testing only
 pub fn cache_path<S: AsRef<OsStr>>(dir: &Path, uri: &str, extension: S) -> PathBuf {
-    let uri = uri.parse::<Uri>().expect("Expected a URI");
+    let uri = uri
+        .parse::<Uri>()
+        .expect(&format!("Expected a URI, got {}", uri));
     let parts = uri.clone().into_parts();
     let mut path = dir.to_path_buf();
     path.push("v1");
