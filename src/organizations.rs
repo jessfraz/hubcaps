@@ -24,6 +24,10 @@ impl Organization {
         }
     }
 
+    pub fn get(&self) -> Future<Org> {
+        self.github.get(&format!("/orgs/{}", self.org))
+    }
+
     /// returns a reference to an interface for Organization invitations
     pub fn membership(&self) -> OrgMembership {
         OrgMembership::new(self.github.clone(), self.org.clone())
