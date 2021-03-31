@@ -103,4 +103,22 @@ pub struct Org {
     pub public_members_url: String,
     pub avatar_url: String,
     pub description: Option<String>,
+    #[serde(default)]
+    pub collaborators: i32,
+    #[serde(default)]
+    pub plan: Plan,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct Plan {
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub name: String,
+    #[serde(default)]
+    pub space: i32,
+    #[serde(default)]
+    pub private_repos: i32,
+    #[serde(default)]
+    pub filled_seats: i32,
+    #[serde(default)]
+    pub seats: i32,
 }

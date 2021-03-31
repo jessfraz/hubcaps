@@ -30,6 +30,15 @@ impl OrgMembership {
         self.github
             .get_stream(&format!("/orgs/{}/invitations", self.org))
     }
+
+    /// Return a stream of all members for this repository
+    ///
+    /// See the [github docs](https://developer.github.com/v3/orgs/members/)
+    /// for more information
+    pub fn members(&self) -> Stream<User> {
+        self.github
+            .get_stream(&format!("/orgs/{}/members", self.org))
+    }
 }
 
 #[derive(Debug, Deserialize)]
